@@ -1,0 +1,5 @@
+LIBRARY TaskbarGlassTAP.dll
+
+EXPORTS
+    TapHookWndProc
+    DllGetClassObject

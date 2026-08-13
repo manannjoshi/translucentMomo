@@ -1,0 +1,30 @@
+name: build
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+
+      - name: Install dependencies
+        run: py -m pip install pystray pillow pyinstaller
+
+      - name: Build exe
+        shell: cmd
+        run: |
+          py scripts\make_icon.py
+          py -m PyInstaller --noconfirm --onefile --windowed --icon assets\icon.ico --name TaskbarGlass --hidden-import pystray --hidden-import pystray._win32 --collect-submodules pystray main.py
+
+      - name: Upload asset
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/TaskbarGlass.exe
